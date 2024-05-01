@@ -46,6 +46,8 @@ app.use("^/$", (req, res) => {
     //secure: true (cookie will only be sent over https)
     //sameSite: "none" (cookie will be sent with the cross origin requests)
 
+    
+
     res.cookie("User" , "Lakshay" ).json({
         message:
             "MRSPTU-TPC Server instance welcomes you to the index page of the API",
