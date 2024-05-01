@@ -7,6 +7,13 @@ const notificationSchema = new mongoose.Schema({
     //type of notification
     type: {
         type: String,
+        required: true,
+        enum:["Club" , "Events" , "Applications"  , "General"],
+    },
+
+    //notification title
+    title: {
+        type: String,
         required: true
     },
 
@@ -21,14 +28,8 @@ const notificationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-
-    //notification user type
-    // userType: {
-    //     type: String,
-    //     required: true
-    // },
-
-
+    
+    
     //notification status
     status: {
         type: Boolean,
