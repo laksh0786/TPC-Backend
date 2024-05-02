@@ -6,7 +6,13 @@ require("dotenv").config();
 //creating the mail sender function
 const mailSender = async (email  , title , body)=>{
 
-    try{
+    if(!Array.isArray(email)){
+        email = [email];
+    }
+
+    const emails = email.join(", ");
+
+    try{    
 
         //creating the transporter
         let transporter = nodemailer.createTransport({
@@ -19,7 +25,7 @@ const mailSender = async (email  , title , body)=>{
 
         let info = await transporter.sendMail({
             from:"University Placmeent Committee - MRSPTU Bathinda",
-            to:email,
+            to:emails,
             subject:title,
             html:body 
         })

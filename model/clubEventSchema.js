@@ -47,6 +47,7 @@ const clubEventSchema = new mongoose.Schema({
 });
 
 
+
 const clubEvent = mongoose.model('ClubEvent', clubEventSchema);
 
 module.exports = clubEvent;

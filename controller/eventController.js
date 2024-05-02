@@ -1,6 +1,26 @@
 const ClubEvent = require('../model/clubEventSchema');
 const Club = require("../model/clubSchema");
 const User = require("../model/userSchema");
+const { newEventNotificationEmail } = require('../mail/template/eventCreatedEmail');
+const mailSender = require('../config/mailSender');
+
+
+//a function to send email
+async function emailSenderFunction(name, eventName, eventDate, eventDetails, clubName , email) {
+
+    try {
+
+        // console.log(registerationConfirmation);
+        const mailResponse = await mailSender(email, "Verification Email From UPC MRSPTU Bathinda", newEventNotificationEmail(name , eventName, eventDate , eventDetails, clubName));
+        console.log("Email sent successfully : ", mailResponse);
+    }
+
+    catch (err) {
+        console.log("Errror occured while sending email : ", err);
+        throw err;
+    }
+
+}
 
 
 //creating new club event
@@ -20,7 +40,7 @@ exports.createClubEvent = async (req, res) => {
         }
 
         //checking if the club exists
-        const clubData = await Club.findById({ _id: clubId });
+        const clubData = await Club.findById({ _id: clubId }).populate("clubMembers").populate("clubFollowers");
 
         //if club does not exist
         if (!clubData) {
@@ -46,6 +66,22 @@ exports.createClubEvent = async (req, res) => {
 
         //saving the new club event
         await newClubEvent.save();
+
+
+        //sending the mail to all the club members and followers
+        const allClubMembers = [...clubData.clubMembers, ...clubData.clubFollowers];
+
+        for(const member of allClubMembers){
+
+            const { email, name } = member;
+
+            //sending the mail
+            await emailSenderFunction(name, eventName, eventDate, eventDescription, clubData.clubName, email);
+
+        }
+        
+
+
 
         //adding the reference of the club event to the club
         clubData.clubEventsList.push(newClubEvent._id);
