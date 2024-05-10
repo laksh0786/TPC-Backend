@@ -3,19 +3,20 @@ const nodemailer = require("nodemailer");
 //importing the env variables to process.env
 require("dotenv").config();
 
-//creating the mail sender function
-const mailSender = async (email  , title , body)=>{
 
-    if(!Array.isArray(email)){
+//creating the mail sender function
+const mailSender = async (email, title, body) => {
+
+    if (!Array.isArray(email)) {
         email = [email];
     }
 
     const emails = email.join(", ");
 
-    try{    
+    try {
 
         //creating the transporter
-        let transporter = nodemailer.createTransport({
+        const transporter = nodemailer.createTransport({
             host: process.env.MAIL_HOST,
             auth: {
                 user: process.env.MAIL_USER,
@@ -24,17 +25,17 @@ const mailSender = async (email  , title , body)=>{
         });
 
         let info = await transporter.sendMail({
-            from:"University Placmeent Committee - MRSPTU Bathinda",
-            to:emails,
-            subject:title,
-            html:body 
+            from: "University Placmeent Committee - MRSPTU Bathinda",
+            to: emails,
+            subject: title,
+            html: body
         })
 
-        console.log(info);
+        // console.log(info);
 
         return info;
 
-    } catch(err){
+    } catch (err) {
 
         console.log(err.message);
 

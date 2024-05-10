@@ -379,4 +379,75 @@ const handleUserUpdation = async (req, res) => {
 }
 
 
+
+//change password controller
+const changePasswordController = async (req , resp)=>{
+
+    try{
+
+        //fetching the email , password and new password from the request body
+        const {email , password , newPassword} = req.body;
+
+        //validating the email and password
+        if(!email || !password || !newPassword){
+            return resp.status(400).json({
+                success : false,
+                error : "Please fill the credentials properly"
+            });
+        }
+
+        //checking if the user exists
+        const userData = await User.findOne({email});
+
+        //if the user doesn't exists
+        if(!userData){
+            return resp.status(400).json({
+                success : false,
+                error : "User doesn't exists"
+            });
+        }
+
+        //verifying the password with the stored password
+        if(await bcrypt.compare(password , userData.password)){
+
+            //hashing the new password
+            const hashedPassword = await bcrypt.hash(newPassword , 10);
+
+            //updating the password
+            const updatedUser = await User.findByIdAndUpdate(userData._id , {
+                password : hashedPassword
+            } , {new : true});
+
+            //sending the response
+            return resp.status(200).json({
+                success : true,
+                message : "Password changed successfully",
+                user : updatedUser
+            });
+
+        }
+        else{
+            return resp.status(400).json({
+                success : false,
+                error : "Password is incorrect"
+            });
+        }
+    
+
+    } catch(err){
+
+        //function to handle the error
+        const errors = handleError(err);
+
+        return resp.status(500).json({
+            success : false,
+            message : "Internal server error",
+            errors : errors
+        });
+
+    }
+
+}
+
+
 module.exports = { handleUserRegistration, handleUserUpdation, loginController };
