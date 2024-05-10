@@ -76,7 +76,10 @@ const getAllUsers = async (req, res) => {
 //get user by id controller
 const getUserById = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id).populate('personalInfo');
+
+        // console.log(req.query);
+
+        const user = await User.findById(req.query.id).populate('personalInfo');
         res.status(200).send({
             success: true,
             user: user
