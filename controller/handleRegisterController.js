@@ -450,4 +450,4 @@ const changePasswordController = async (req , resp)=>{
 }
 
 
-module.exports = { handleUserRegistration, handleUserUpdation, loginController };
+module.exports = { handleUserRegistration, handleUserUpdation, loginController , changePasswordController , getAllUsers , getUserById};
