@@ -179,7 +179,7 @@ const handleUserRegistration = async (req, res) => {
 
 
         // send the response
-        res.status(201).send({
+        res.status(201).json({
             UserId: user._id,
             success: true,
             user: user,
@@ -188,7 +188,7 @@ const handleUserRegistration = async (req, res) => {
 
         const errors = handleError(e);
         // send the error response
-        res.status(400).send({
+        res.status(400).json({
             errors: errors,
             message: e.message,
             success: false
@@ -367,14 +367,14 @@ const handleUserUpdation = async (req, res) => {
         updatedUser.password = undefined;
 
         // send the response
-        res.status(201).send({
+        res.status(201).json({
             success: true,
             user: updatedUser,
         });
     } catch (e) {
 
         // send the error response
-        res.status(400).send({
+        res.status(400).json({
             error: e.message,
             success: false
         });
