@@ -137,7 +137,8 @@ exports.getParticularClub = async (req, resp) => {
         console.log(error);
         resp.status(500).json({
             success: false,
-            message: "Internal server error while fetching the club"
+            message: "Internal server error while fetching the club",
+            error: error.message
         });
     }
 
