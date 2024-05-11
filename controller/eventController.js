@@ -3,9 +3,11 @@ const Club = require("../model/clubSchema");
 const User = require("../model/userSchema");
 const { newEventNotificationEmail } = require('../mail/template/eventCreatedEmail');
 const mailSender = require('../config/mailSender');
+const cron = require('node-cron');
+const { eventReminderEmail } = require('../mail/template/eventReminderEmail');
 
 
-//a function to send email
+//a function to send email for the new event created
 async function emailSenderFunction(name, eventName, eventDate, eventDetails, clubName , email) {
 
     try {
@@ -17,11 +19,54 @@ async function emailSenderFunction(name, eventName, eventDate, eventDetails, clu
 
     catch (err) {
         console.log("Errror occured while sending email : ", err);
-        throw err;
     }
 
 }
 
+//function to send the email to the attendees on the event date
+const sendReminderEmail = async (name, email, eventData , clubName) => {
+
+    try{
+
+        const mailResponse = await mailSender(email, "Reminder Email for the Event", eventReminderEmail(name, eventData.eventName, eventData.eventDate, eventData.eventDescription, clubName));
+        console.log("Email sent successfully : ", mailResponse);
+
+    } catch(err){
+        console.log("Errror occured while sending email : ", err);
+    }
+
+}
+
+
+//a function to schedule the email for the event date
+async function scheduleEmail(eventId) {
+
+    //finding the event data
+    const eventData = await ClubEvent.findById({ _id: eventId }).populate("eventAttendees").populate("clubId");
+    const clubName = eventData.clubId.clubName;
+    const eventDate = eventData.eventDate;
+
+    //finding the event attendees
+    const attendees = eventData.eventAttendees;
+
+
+    cron.schedule(`0 11 * * *`, async () => { // This cron expression runs the task at 7 AM every day
+
+        const currentDate = new Date();
+        const differenceInDays = Math.ceil((eventDate - currentDate) / (1000 * 60 * 60 * 24)); // Calculate days until event
+        
+        if (differenceInDays === 1) { // Send email one day before the event
+           
+            //sending the email to all the attendees
+            for (const attendee of attendees) {
+                const { name, email } = attendee;
+                await sendReminderEmail(name, email , eventData , clubName);
+            }
+
+        }
+
+    });
+}
 
 //creating new club event
 exports.createClubEvent = async (req, res) => {
@@ -81,6 +126,8 @@ exports.createClubEvent = async (req, res) => {
         }
         
 
+        //scheduling the email for the event date
+        scheduleEmail(newClubEvent._id);
 
 
         //adding the reference of the club event to the club
@@ -98,7 +145,12 @@ exports.createClubEvent = async (req, res) => {
         });
 
     } catch (err) {
-
+            
+            return res.status(500).json({
+                success: false,
+                message: "Internal Server Error while creating the club event",
+                error: err.message
+            });
     }
 
 }
