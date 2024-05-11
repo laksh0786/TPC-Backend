@@ -60,12 +60,12 @@ async function sendVerificationEmail(email, name) {
 const getAllUsers = async (req, res) => {
     try {
         const users = await User.find().populate('personalInfo');
-        res.status(200).send({
+        res.status(200).json({
             success: true,
             users: users
         });
     } catch (err) {
-        res.status(400).send({
+        res.status(400).json({
             success: false,
             error: err.message
         });
@@ -80,12 +80,12 @@ const getUserById = async (req, res) => {
         // console.log(req.query);
 
         const user = await User.findById(req.query.id).populate('personalInfo');
-        res.status(200).send({
+        res.status(200).json({
             success: true,
             user: user
         });
     } catch (err) {
-        res.status(400).send({
+        res.status(400).json({
             success: false,
             error: err.message
         });
