@@ -120,7 +120,7 @@ exports.getParticularClub = async (req, resp) => {
 
         //validating the club
         if (!clubData) {
-            return resp.status(400).json({
+            return resp.json({
                 success: false,
                 message: "No club found with this id"
             });
