@@ -8,12 +8,12 @@ const { eventReminderEmail } = require('../mail/template/eventReminderEmail');
 
 
 //a function to send email for the new event created
-async function emailSenderFunction(name, eventName, eventDate, eventDetails, clubName , email) {
+async function emailSenderFunction(name, eventName, eventDate, eventDetails, clubName, email) {
 
     try {
 
         // console.log(registerationConfirmation);
-        const mailResponse = await mailSender(email, "Verification Email From UPC MRSPTU Bathinda", newEventNotificationEmail(name , eventName, eventDate , eventDetails, clubName));
+        const mailResponse = await mailSender(email, "Verification Email From UPC MRSPTU Bathinda", newEventNotificationEmail(name, eventName, eventDate, eventDetails, clubName));
         console.log("Email sent successfully : ", mailResponse);
     }
 
@@ -24,14 +24,14 @@ async function emailSenderFunction(name, eventName, eventDate, eventDetails, clu
 }
 
 //function to send the email to the attendees on the event date
-const sendReminderEmail = async (name, email, eventData , clubName) => {
+const sendReminderEmail = async (name, email, eventData, clubName) => {
 
-    try{
+    try {
 
         const mailResponse = await mailSender(email, "Reminder Email for the Event", eventReminderEmail(name, eventData.eventName, eventData.eventDate, eventData.eventDescription, clubName));
         console.log("Email sent successfully : ", mailResponse);
 
-    } catch(err){
+    } catch (err) {
         console.log("Errror occured while sending email : ", err);
     }
 
@@ -54,13 +54,13 @@ async function scheduleEmail(eventId) {
 
         const currentDate = new Date();
         const differenceInDays = Math.ceil((eventDate - currentDate) / (1000 * 60 * 60 * 24)); // Calculate days until event
-        
+
         if (differenceInDays === 1) { // Send email one day before the event
-           
+
             //sending the email to all the attendees
             for (const attendee of attendees) {
                 const { name, email } = attendee;
-                await sendReminderEmail(name, email , eventData , clubName);
+                await sendReminderEmail(name, email, eventData, clubName);
             }
 
         }
@@ -115,8 +115,7 @@ exports.createClubEvent = async (req, res) => {
 
         //sending the mail to all the club members and followers
         const allClubMembers = [...clubData.clubMembers, ...clubData.clubFollowers];
-
-        for(const member of allClubMembers){
+        for (const member of allClubMembers) {
 
             const { email, name } = member;
 
@@ -124,11 +123,9 @@ exports.createClubEvent = async (req, res) => {
             await emailSenderFunction(name, eventName, eventDate, eventDescription, clubData.clubName, email);
 
         }
-        
 
         //scheduling the email for the event date
-        scheduleEmail(newClubEvent._id);
-
+        await scheduleEmail(newClubEvent._id);
 
         //adding the reference of the club event to the club
         clubData.clubEventsList.push(newClubEvent._id);
@@ -145,12 +142,12 @@ exports.createClubEvent = async (req, res) => {
         });
 
     } catch (err) {
-            
-            return res.status(500).json({
-                success: false,
-                message: "Internal Server Error while creating the club event",
-                error: err.message
-            });
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error while creating the club event",
+            error: err.message
+        });
     }
 
 }
@@ -314,16 +311,16 @@ exports.updateClubEvent = async (req, resp) => {
         //updating the club event
         const clubEvent = await ClubEvent.findByIdAndUpdate({ _id: eventId }, {
             eventName: eventName || clubEventData.eventName,
-            eventDescription : eventDescription || clubEventData.eventDescription,
-            eventDate : eventDate || clubEventData.eventDate,
-            eventTime : eventTime || clubEventData.eventTime,
-            eventVenue : eventVenue || clubEventData.eventVenue,
-            eventHeadName : eventHeadName || clubEventData.eventHeadName,
-            eventHeadContact : eventHeadContact || clubEventData.eventHeadContact,
-            eventLink : eventLink || clubEventData.eventLink
+            eventDescription: eventDescription || clubEventData.eventDescription,
+            eventDate: eventDate || clubEventData.eventDate,
+            eventTime: eventTime || clubEventData.eventTime,
+            eventVenue: eventVenue || clubEventData.eventVenue,
+            eventHeadName: eventHeadName || clubEventData.eventHeadName,
+            eventHeadContact: eventHeadContact || clubEventData.eventHeadContact,
+            eventLink: eventLink || clubEventData.eventLink
         }, { new: true });
 
-        
+
         //sending the response
         resp.status(200).json({
             success: true,
@@ -373,7 +370,7 @@ exports.addorRemoveAttendees = async (req, resp) => {
         }
 
         //finding the user
-        const user = await User.findById({ _id: userId});
+        const user = await User.findById({ _id: userId });
 
         //if user does not exist
         if (!user) {
