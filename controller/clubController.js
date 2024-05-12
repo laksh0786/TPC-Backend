@@ -72,7 +72,8 @@ exports.createClub = async (req, resp) => {
         console.log(err);
         resp.status(500).json({
             success: false,
-            message: "Internal server error while creating the club"
+            message: "Internal server error while creating the club",
+            error:err.message
         });
     }
 
