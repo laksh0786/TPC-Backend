@@ -22,7 +22,7 @@ exports.authController = (req , resp)=>{
     let isTokenValid;
 
     try{
-        isTokenValid = jwt.verify(token , process.env.JWT_SECRET_KEY);
+        isTokenValid = jwt.verify(token , process.env.JWT_SECRET);
     } catch(err){
         
         console.log("Token is invalid or expired.");
