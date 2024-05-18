@@ -49,7 +49,12 @@ const applicationSchema = new mongoose.Schema({
     },
     applicationLink: {
         type: String,
-    }
+    },
+    applicationParticipants:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
+
 }, {
     timestamps: true
 });

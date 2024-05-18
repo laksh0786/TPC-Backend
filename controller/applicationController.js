@@ -1,6 +1,7 @@
 //importing the models
 const Application = require("../model/applicationSchema");
 const User = require("../model/userSchema");
+const moment = require("moment-timezone");
 
 
 //controller to create a new application
@@ -9,7 +10,7 @@ exports.createApplication = async (req, resp) => {
     try {
 
         //fetching the application details from the request body
-        const applicationData = req.body;
+        const applicationData= req.body;
 
         //creating the new application
         const application = new Application(applicationData);
@@ -43,7 +44,7 @@ exports.getAllApplications = async (req, resp) => {
     try {
 
         //getting all the applications
-        const applications = await Application.find();
+        const applications = await Application.find().populate("applicationParticipants");
 
         //sending the applications
         resp.status(200).json({
@@ -81,7 +82,7 @@ exports.getParticularApplication = async (req, resp) => {
         }
 
         //fetching the application
-        const applicationData = await Application.findById(id);
+        const applicationData = await Application.findById(id).populate("applicationParticipants");
 
 
         //checking if the application exists
@@ -196,7 +197,11 @@ exports.addOrRemoveParticipants = async (req, resp) => {
 
         //fetching the data from the request body
         //action can be either add or remove
-        const { applicationId, userId, action } = req.body;
+        const { applicationId, action } = req.body;
+
+
+        //fetching the user id from the token payload
+        const userId = req.user.id;
 
         //validating the data
         if(!applicationId || !userId || !action){

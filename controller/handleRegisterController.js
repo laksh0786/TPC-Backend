@@ -79,11 +79,13 @@ const getUserById = async (req, res) => {
 
         // console.log(req.query);
 
-        const user = await User.findById(req.query.id).populate('personalInfo');
+        const user = await User.findById(req.query.id).populate('personalInfo').populate('clubEvents').populate('clubMembership').populate('clubFollowing').populate('applications').populate('clubEvents');
+
         res.status(200).json({
             success: true,
             user: user
         });
+        
     } catch (err) {
         res.status(400).json({
             success: false,
@@ -380,7 +382,6 @@ const handleUserUpdation = async (req, res) => {
         });
     }
 }
-
 
 
 //change password controller
