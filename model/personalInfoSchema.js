@@ -16,11 +16,11 @@ const personalInfoSchema = new mongoose.Schema(
         },
 
         rollNumber: {
-            type: Number
+            type: String
         },
 
         contact: {
-            type: Number,
+            type: String,
         },
 
         gender: {
