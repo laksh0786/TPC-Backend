@@ -87,7 +87,7 @@ exports.getAllClubs = async (req, resp) => {
 
         //fetching all the clubs
         // const clubs = await Club.find();
-        const clubs = await Club.find().populate("clubEventsList").populate("clubMembers").populate("clubFollowers");
+        const clubs = await Club.find().populate("clubEventsList").populate("clubMembers").populate("personalInfo").populate("clubFollowers");
 
         //sending the response
         resp.status(200).json({
@@ -271,10 +271,10 @@ exports.addClubFollowers = async (req, resp) => {
     try {
 
         //fetching the club id and user id from the request body
-        const { clubId, userId } = req.body;
+        const { clubId, email } = req.body;
 
         //validating the data
-        if (!clubId || !userId) {
+        if (!clubId || !email) {
             return resp.status(400).json({
                 success: false,
                 message: "Please enter all the details"
@@ -282,7 +282,7 @@ exports.addClubFollowers = async (req, resp) => {
         }
 
         //finding and validating the user by id
-        const userData = await User.findById(userId);
+        const userData = await User.findOne({email});
 
         //validating the user
         if (!userData) {
@@ -304,7 +304,7 @@ exports.addClubFollowers = async (req, resp) => {
         }
 
         //checking if the user is already following the club
-        if (clubData.clubFollowers.includes(userId)) {
+        if (clubData.clubFollowers.includes(userData._id)) {
             return resp.status(400).json({
                 success: false,
                 message: "User is already following the club"
@@ -312,7 +312,7 @@ exports.addClubFollowers = async (req, resp) => {
         }
 
         //adding the user to the club followers
-        clubData.clubFollowers.push(userId);
+        clubData.clubFollowers.push(userData._id);
 
         //adding the club to the user club following
         userData.clubFollowing.push(clubId);
