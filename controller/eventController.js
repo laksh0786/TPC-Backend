@@ -196,8 +196,10 @@ exports.deleteClubEvent = async (req, res) => {
         
         //removing the reference of the club event from the club
         clubData.clubEventsList.pull(clubEvent._id);
+
         //saving the club
         await clubData.save();
+        
         //deleting the club event
         await ClubEvent.findByIdAndDelete({_id: eventId});
 
