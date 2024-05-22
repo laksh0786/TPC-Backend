@@ -436,7 +436,8 @@ exports.removeClubFollowers = async (req, resp) => {
 
         return resp.status(500).json({
             success: false,
-            message: "Internal server error while removing the user from the club followers"
+            message: "Internal server error while removing the user from the club followers",
+            error:err.message
         })
     }
 }
