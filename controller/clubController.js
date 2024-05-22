@@ -1,6 +1,7 @@
 //importing the schema
 const Club = require("../model/clubSchema");
 const User = require("../model/userSchema");
+const PersonalInfo = require("../model/personalInfoSchema");
 const ClubEvent = require("../model/clubEventSchema");
 const { uploadFile } = require("../config/fileUploader");
 
@@ -87,7 +88,19 @@ exports.getAllClubs = async (req, resp) => {
 
         //fetching all the clubs
         // const clubs = await Club.find();
-        const clubs = await Club.find().populate("clubEventsList").populate("clubMembers").populate("personalInfo").populate("clubFollowers");
+        const clubs = await Club.find().populate("clubEventsList").populate({
+            path: "clubMembers",
+            populate: {
+                path: "personalInfo",
+                model: "PersonalInfo"
+            }
+        }).populate({
+            path: "clubFollowers",
+            populate: {
+                path: "personalInfo",
+                // model: "PersonalInfo"
+            }
+        });
 
         //sending the response
         resp.status(200).json({
@@ -117,7 +130,19 @@ exports.getParticularClub = async (req, resp) => {
 
         //fetching the club
         // const clubData = await Club.findById(clubId);
-        const clubData = await Club.findById(clubId).populate("clubEventsList").populate("clubMembers").populate("personalInfo").populate("clubFollowers");
+        const clubData = await Club.findById(clubId).populate("clubEventsList").populate({
+            path: "clubMembers",
+            populate: {
+                path: "personalInfo",
+                // model: "PersonalInfo"
+            }
+        }).populate({
+            path: "clubFollowers",
+            populate: {
+                path: "personalInfo",
+                // model: "PersonalInfo"
+            }
+        });
 
         //validating the club
         if (!clubData) {
