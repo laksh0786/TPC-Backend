@@ -117,7 +117,7 @@ exports.getParticularClub = async (req, resp) => {
 
         //fetching the club
         // const clubData = await Club.findById(clubId);
-        const clubData = await Club.findById(clubId).populate("clubEventsList").populate("clubMembers").populate("clubFollowers");
+        const clubData = await Club.findById(clubId).populate("clubEventsList").populate("clubMembers").populate("personalInfo").populate("clubFollowers");
 
         //validating the club
         if (!clubData) {
