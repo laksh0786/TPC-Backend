@@ -554,11 +554,11 @@ exports.addOrRemoveClubMembers = async (req, resp) => {
 
         //fetching the club id and user id from the request body
         //action : add or remove
-        const { clubId, userId, action } = req.body;
+        const { clubId, email , action } = req.body;
 
 
         //validating the data
-        if (!clubId || !userId || !action) {
+        if (!clubId || !email || !action) {
             return resp.status(400).json({
                 success: false,
                 message: "Please enter all the details"
@@ -577,7 +577,7 @@ exports.addOrRemoveClubMembers = async (req, resp) => {
         }
 
         //finding and validating the user by id
-        const userData = await User.findById(userId);
+        const userData = await User.findOne({ email });
 
         //validating the user
         if (!userData) {
@@ -591,7 +591,7 @@ exports.addOrRemoveClubMembers = async (req, resp) => {
         if (action === "add") {
 
             //checking if the user is already a member of the club
-            if (clubData.clubMembers.includes(userId)) {
+            if (clubData.clubMembers.includes(userData._id)) {
                 return resp.status(400).json({
                     success: false,
                     message: "User is already a member of the club"
@@ -599,7 +599,7 @@ exports.addOrRemoveClubMembers = async (req, resp) => {
             }
 
             //adding the user to the club members
-            clubData.clubMembers.push(userId);
+            clubData.clubMembers.push(userData._id);
 
             //adding the club to the user club membership
             userData.clubMembership.push(clubId);
@@ -607,7 +607,7 @@ exports.addOrRemoveClubMembers = async (req, resp) => {
         } else {
 
             //checking if the user is not a member of the club
-            if (!clubData.clubMembers.includes(userId)) {
+            if (!clubData.clubMembers.includes(userData._id)) {
                 return resp.status(400).json({
                     success: false,
                     message: "User is not a member of the club"
@@ -615,7 +615,7 @@ exports.addOrRemoveClubMembers = async (req, resp) => {
             }
 
             //removing the user from the club members
-            clubData.clubMembers.pull(userId);
+            clubData.clubMembers.pull(userData._id);
 
             //removing the club from the user club membership
             userData.clubMembership.pull(clubId);
