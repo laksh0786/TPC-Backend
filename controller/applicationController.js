@@ -262,10 +262,10 @@ exports.addOrRemoveParticipants = async (req, resp) => {
             }
 
             //removing the participant from the application
-            application.applicationParticipants = application.applicationParticipants.filter(participant => participant !== userId);
+            application.applicationParticipants = application.applicationParticipants.filter(participant => participant != userId);
 
             //removing the application from the user
-            user.applications = user.applications.filter(application => application !== applicationId);
+            user.applications = user.applications.filter(application => application != applicationId);
 
         }
 
