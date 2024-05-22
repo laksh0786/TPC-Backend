@@ -160,6 +160,7 @@ exports.deleteClubEvent = async (req, res) => {
 
         //fetching the club event id from the request query
         const { clubId, eventId } = req.query;
+        console.log(clubId, eventId);
 
         //validating the data
         if (!eventId) {
@@ -192,15 +193,21 @@ exports.deleteClubEvent = async (req, res) => {
             });
         }
 
+        
         //removing the reference of the club event from the club
         clubData.clubEventsList.pull(clubEvent._id);
+        //saving the club
+        await clubData.save();
+        //deleting the club event
+        await ClubEvent.findByIdAndDelete({_id: eventId});
 
-        //removing the club event
-        await clubEvent.remove();
-
+        return res.status(200).json({
+            success: true,
+            message: "Club Event deleted successfully"
+        });
 
     } catch (err) {
-
+        console.log(err);
         return res.status(500).json({
             success: false,
             message: "Internal Server Error while deleting the club event"
@@ -288,6 +295,7 @@ exports.updateClubEvent = async (req, resp) => {
 
         //fetching the data from the request body
         const { eventId, eventName, eventDescription, eventDate, eventTime, eventVenue, eventHeadName, eventHeadContact, eventLink } = req.body;
+
 
         //validating the data
         if (!eventId) {
