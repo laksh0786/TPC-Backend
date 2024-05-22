@@ -296,10 +296,10 @@ exports.addClubFollowers = async (req, resp) => {
     try {
 
         //fetching the club id and user id from the request body
-        const { clubId, email } = req.body;
+        const { clubId, userId } = req.body;
 
         //validating the data
-        if (!clubId || !email) {
+        if (!clubId || !userId) {
             return resp.status(400).json({
                 success: false,
                 message: "Please enter all the details"
@@ -307,7 +307,7 @@ exports.addClubFollowers = async (req, resp) => {
         }
 
         //finding and validating the user by id
-        const userData = await User.findOne({email});
+        const userData = await User.findById(userId);
 
         //validating the user
         if (!userData) {
