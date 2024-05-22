@@ -384,7 +384,7 @@ exports.removeClubFollowers = async (req, resp) => {
         }
 
         //finding and validating the club by id
-        const clubData = await Club(clubId);
+        const clubData = await Club.findById(clubId);
 
         //validating the club
         if (!clubData) {
